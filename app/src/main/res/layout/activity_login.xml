@@ -68,12 +68,23 @@
 
     <!-- TextView: Already Have Account -->
     <TextView
+        android:id="@+id/login_forgot_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Forgot Password?"
+        android:textAlignment="center"
+        android:layout_below="@id/login_login_btn"
+        android:layout_marginTop="30dp"
+        android:textColor="#000" />
+
+    <!-- TextView: Already Have Account -->
+    <TextView
         android:id="@+id/login_register_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Need an account? Sign Up"
         android:textAlignment="center"
-        android:layout_below="@id/login_login_btn"
+        android:layout_below="@id/login_forgot_tv"
         android:layout_marginTop="30dp"
         android:textColor="#000" />
 

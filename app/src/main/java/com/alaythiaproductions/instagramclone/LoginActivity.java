@@ -23,32 +23,31 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import org.w3c.dom.Text;
-
-public class RegisterActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText mEmail, mPassword;
-    private Button mRegisterButton;
-    private TextView mHaveAccount;
-    private ProgressDialog progressDialog;
+    private TextView mNoAccount;
+    private Button mLogin;
     private FirebaseAuth mAuth;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register);
+        setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Create Account");
+        actionBar.setTitle("Login");
 
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
         init();
 
-        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+        // Login
+        mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -58,73 +57,65 @@ public class RegisterActivity extends AppCompatActivity {
                 if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                     mEmail.setError("Invalid Email");
                     mEmail.setFocusable(true);
-                    //Toast.makeText(RegisterActivity.this, "Please enter valid email", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "Please enter valid email", Toast.LENGTH_SHORT).show();
                 } else if (password.length() < 6) {
                     mPassword.setError("Password must be at least 6 characters");
                     mPassword.setFocusable(true);
-                    //Toast.makeText(RegisterActivity.this, "Please enter a valid password", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(LoginActivity.this, "Please enter a valid password", Toast.LENGTH_SHORT).show();
                 } else {
-                    registerUser(email, password);
+                    loginUser(email, password);
                 }
             }
         });
 
-        mHaveAccount.setOnClickListener(new View.OnClickListener() {
+
+        // Go to Register Activity
+        mNoAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+            }
+        });
+    }
+
+    private void init() {
+        mEmail = findViewById(R.id.login_email_et);
+        mPassword = findViewById(R.id.login_password_et);
+        mLogin = findViewById(R.id.login_login_btn);
+        mNoAccount = findViewById(R.id.login_register_tv);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Logging in...");
+
+    }
+
+    private void loginUser(String email, String password) {
+        progressDialog.show();
+
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            progressDialog.dismiss();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                            finish();
+                        } else {
+                            progressDialog.dismiss();
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                Toast.makeText(LoginActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
         return super.onSupportNavigateUp();
-    }
-
-    private void init() {
-        mEmail = findViewById(R.id.register_email_et);
-        mPassword = findViewById(R.id.register_password_et);
-        mRegisterButton = findViewById(R.id.register_register_btn);
-        mHaveAccount = findViewById(R.id.register_login_tv);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Registering User...");
-    }
-
-
-    /**
-     * If email and password are valid, show progress dialog and start registering the user
-     * @param email
-     * @param password
-     */
-    private void registerUser(String email, String password) {
-        progressDialog.show();
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success: dismiss the progress dialog and register activity
-                            progressDialog.dismiss();
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(RegisterActivity.this, "Registration Success!\nWelcome " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(RegisterActivity.this, ProfileActivity.class));
-                            finish();
-                        } else {
-                            // Sign in failure: display the error message to the user
-                            progressDialog.dismiss();
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

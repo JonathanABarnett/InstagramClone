@@ -20,16 +20,22 @@
         style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/login_btn"/>
+        android:layout_above="@id/login_btn"
+        android:drawableStart="@drawable/common_full_open_on_phone"
+        android:drawableLeft="@drawable/common_full_open_on_phone"
+        android:minWidth="200dp"/>
 
     <Button
         android:id="@+id/login_btn"
         android:text="@string/login"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="70dp"
         style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:drawableStart="@drawable/common_full_open_on_phone"
+        android:drawableLeft="@drawable/common_full_open_on_phone"
+        android:minWidth="200dp"/>
 
 
 </RelativeLayout>

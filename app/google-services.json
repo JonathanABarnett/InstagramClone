@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "668987369967-gce7c3951kmi0ecn6sjms0i6rgc9prgb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.alaythiaproductions.instagramclone",
+            "certificate_hash": "b1f76423d0bc41a3cb6dc3f6fb035447f00a598e"
+          }
+        },
+        {
           "client_id": "668987369967-d39r6u4t8ktbuks7dvrnng11d8106lqp.apps.googleusercontent.com",
           "client_type": 3
         }

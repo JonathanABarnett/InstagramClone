@@ -244,24 +244,27 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
 
-                            String email = user.getEmail();
-                            String uid = user.getUid();
+                            // If user is signing in for the first time get and show the user info from Google Account
+                            if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+                                String email = user.getEmail();
+                                String uid = user.getUid();
 
-                            HashMap<Object, String> hashMap = new HashMap<>();
-                            hashMap.put("email", email);
-                            hashMap.put("uid", uid);
-                            hashMap.put("name", "");
-                            hashMap.put("phone", "");
-                            hashMap.put("image", "");
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                hashMap.put("email", email);
+                                hashMap.put("uid", uid);
+                                hashMap.put("name", "");
+                                hashMap.put("phone", "");
+                                hashMap.put("image", "");
 
-                            // Firebase DB Instance
-                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                // Firebase DB Instance
+                                FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-                            // Path to Store User Data
-                            DatabaseReference userRef = database.getReference("Users");
+                                // Path to Store User Data
+                                DatabaseReference userRef = database.getReference("Users");
 
-                            // Put Data from Hashmap into DB
-                            userRef.child(uid).setValue(hashMap);
+                                // Put Data from Hashmap into DB
+                                userRef.child(uid).setValue(hashMap);
+                            }
 
                             Toast.makeText(LoginActivity.this, "" + user.getEmail(), Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(LoginActivity.this, DashboardActivity.class));

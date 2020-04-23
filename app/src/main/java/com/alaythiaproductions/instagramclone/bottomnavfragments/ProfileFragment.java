@@ -20,6 +20,9 @@ import androidx.fragment.app.Fragment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -28,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alaythiaproductions.instagramclone.MainActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -118,8 +122,6 @@ public class ProfileFragment extends Fragment {
 
         progressDialog = new ProgressDialog(getActivity());
 
-
-
         Query query = userRef.orderByChild("email").equalTo(mCurrentUser.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -191,8 +193,6 @@ public class ProfileFragment extends Fragment {
         // Request Runtime Storage Permission
        requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
     }
-
-
 
     private void showEditProfileDialog() {
         String options [] = {"Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone"};
@@ -434,5 +434,45 @@ public class ProfileFragment extends Fragment {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
+    }
+
+    private void checkUserStatus() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+
+        } else {
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            getActivity().finish();
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
+    }
+
+    /**
+     * Inflate the options menus
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    /**
+     * Handle Menu Item Click
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Get Item ID
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            mAuth.signOut();
+            checkUserStatus();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

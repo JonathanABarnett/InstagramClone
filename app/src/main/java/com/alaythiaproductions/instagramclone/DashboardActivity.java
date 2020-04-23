@@ -103,27 +103,4 @@ public class DashboardActivity extends AppCompatActivity {
         super.onStart();
     }
 
-    /**
-     * Inflate the options menus
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * Handle Menu Item Click
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Get Item ID
-        int id = item.getItemId();
-
-        if (id == R.id.action_logout) {
-            mAuth.signOut();
-            checkUserStatus();
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

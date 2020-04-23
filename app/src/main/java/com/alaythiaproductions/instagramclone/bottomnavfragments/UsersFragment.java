@@ -127,7 +127,7 @@ public class UsersFragment extends Fragment {
                     recyclerView.setAdapter(userAdapter);
                 }
             }
-
+ 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

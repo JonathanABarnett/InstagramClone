@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.alaythiaproductions.instagramclone.bottomnavfragments.ChatListFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.HomeFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ProfileFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.UsersFragment;
@@ -75,6 +76,14 @@ public class DashboardActivity extends AppCompatActivity {
                     FragmentTransaction userFragmentTransaction = getSupportFragmentManager().beginTransaction();
                     userFragmentTransaction.replace(R.id.content, usersFragment, "");
                     userFragmentTransaction.commit();
+                    return true;
+                case R.id.nav_chat:
+                    // Users Fragment
+                    actionBar.setTitle("Messages");
+                    ChatListFragment chatFragment = new ChatListFragment();
+                    FragmentTransaction chatFragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    chatFragmentTransaction.replace(R.id.content, chatFragment, "");
+                    chatFragmentTransaction.commit();
                     return true;
             }
 

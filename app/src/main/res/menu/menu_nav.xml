@@ -13,4 +13,8 @@
         android:title="Users"
         android:icon="@drawable/ic_users_black" />
 
+    <item android:id="@+id/nav_chat"
+        android:title="Messages"
+        android:icon="@drawable/ic_chat_black" />
+
 </menu>

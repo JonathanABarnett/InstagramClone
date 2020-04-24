@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,14 +16,20 @@ import com.alaythiaproductions.instagramclone.bottomnavfragments.ChatListFragmen
 import com.alaythiaproductions.instagramclone.bottomnavfragments.HomeFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ProfileFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.UsersFragment;
+import com.alaythiaproductions.notifications.Token;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 public class DashboardActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private ActionBar actionBar;
+    private String mUserUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +48,30 @@ public class DashboardActivity extends AppCompatActivity {
         BottomNavigationView navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
 
+        // Home Fragment - Default On Start
         actionBar.setTitle("Home");
         HomeFragment homeFragment = new HomeFragment();
         FragmentTransaction homeFragmentTransaction = getSupportFragmentManager().beginTransaction();
         homeFragmentTransaction.replace(R.id.content, homeFragment, "");
         homeFragmentTransaction.commit();
+
+        checkUserStatus();
+
+        // Update Token
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+    }
+
+    @Override
+    protected void onResume() {
+        checkUserStatus();
+
+        super.onResume();
+    }
+
+    public void updateToken(String token) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token mToken = new Token(token);
+        ref.child(mUserUID).setValue(mToken);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener selectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -94,7 +120,13 @@ public class DashboardActivity extends AppCompatActivity {
     private void checkUserStatus() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
+            mUserUID = user.getUid();
 
+            // Save UID of currently signed in user in shared preferences
+            SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("Current_USERID", mUserUID);
+            editor.apply();
         } else {
             startActivity(new Intent(DashboardActivity.this, MainActivity.class));
         }

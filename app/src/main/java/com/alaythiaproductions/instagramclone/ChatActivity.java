@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -103,20 +105,26 @@ public class ChatActivity extends AppCompatActivity {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     receiverName = ds.child("name").getValue().toString();
                     receiverImage = ds.child("image").getValue().toString();
+                    String typingStatus = ds.child("typing_status").getValue().toString();
 
-                    String onlineStatus = ds.child("online_status").getValue().toString();
-
-                    if (onlineStatus.equals("Online")) {
-                        mUserStatus.setText(onlineStatus);
+                    // Check typing status
+                    if (typingStatus.equals(currentUserUID)) {
+                        mUserStatus.setText("Typing...");
                     } else {
-                        Calendar calendar = Calendar.getInstance(Locale.US);
-                        calendar.setTimeInMillis(Long.parseLong(onlineStatus));
-                        String dateTime = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
-                        mUserStatus.setText("Last seen online: " + dateTime);
+                        String onlineStatus = ds.child("online_status").getValue().toString();
+
+                        if (onlineStatus.equals("Online")) {
+                            mUserStatus.setText(onlineStatus);
+                        } else {
+                            // Convert timestamp to Time and Date
+                            Calendar calendar = Calendar.getInstance(Locale.US);
+                            calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+                            String dateTime = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
+                            mUserStatus.setText("Last seen online: " + dateTime);
+                        }
                     }
 
                     mName.setText(receiverName);
-
 
                     try {
                         Picasso.get().load(receiverImage).placeholder(R.drawable.ic_default_img_blue).into(mProfileImage);
@@ -142,6 +150,27 @@ public class ChatActivity extends AppCompatActivity {
                 } else {
                     sendMessage(message);
                 }
+            }
+        });
+
+        mMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().trim().length() == 0) {
+                    checkTypingStatus("Not Typing");
+                } else {
+                    checkTypingStatus(receiverUID);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
             }
         });
 
@@ -254,6 +283,14 @@ public class ChatActivity extends AppCompatActivity {
         dbRef.updateChildren(hashMap);
     }
 
+    private void checkTypingStatus(String typing) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserUID);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("typing_status", typing);
+
+        dbRef.updateChildren(hashMap);
+    }
+
     @Override
     protected void onStart() {
         checkUserStatus();
@@ -268,6 +305,7 @@ public class ChatActivity extends AppCompatActivity {
         String timeStamp = String.valueOf(System.currentTimeMillis());
 
         checkOnlineStatus(timeStamp);
+        checkTypingStatus("No One");
 
         userRefForSeen.removeEventListener(seenListener);
     }

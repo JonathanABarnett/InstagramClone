@@ -1,14 +1,33 @@
 package com.alaythiaproductions.instagramclone;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -18,6 +37,16 @@ public class ChatActivity extends AppCompatActivity {
     private TextView mName, mUserStatus;
     private EditText mMessage;
     private ImageButton mSendBtn;
+
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference userRef;
+
+    private String receiverUID;
+    private String receiverName;
+    private String currentUserUID;
+    private String currentUserName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +63,123 @@ public class ChatActivity extends AppCompatActivity {
         mUserStatus = findViewById(R.id.chat_user_status);
         mMessage = findViewById(R.id.chat_message);
         mSendBtn = findViewById(R.id.send_button);
+
+        // Clicking on the user from the users list passes UID through the intent
+        // Use that UID to get the picture, name, and chat
+        Intent intent = getIntent();
+        receiverUID = intent.getStringExtra("userUID");
+        receiverName = intent.getStringExtra("userName");
+        mAuth = FirebaseAuth.getInstance();
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        userRef = firebaseDatabase.getReference("Users");
+
+        // Search user to get the receiver's info
+        Query userQuery = userRef.orderByChild("uid").equalTo(receiverUID);
+        // Get Receiver Profile Image and Name
+        userQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String name = ds.child("name").getValue().toString();
+                    String image = ds.child("image").getValue().toString();
+
+                    mName.setText(name);
+
+                    try {
+                        Picasso.get().load(image).placeholder(R.drawable.ic_default_img_blue).into(mProfileImage);
+                    } catch (Exception e) {
+                        Picasso.get().load(R.drawable.ic_default_img_blue).into(mProfileImage);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Send Message
+        mSendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String message = mMessage.getText().toString().trim();
+                if (TextUtils.isEmpty(message)) {
+                    Toast.makeText(ChatActivity.this, "Please enter a message to send", Toast.LENGTH_SHORT).show();
+                } else {
+                    sendMessage(message);
+                }
+            }
+        });
+    }
+
+    private void sendMessage(String message) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("sender_uid", currentUserUID);
+        hashMap.put("sender_name", currentUserName);
+        hashMap.put("receiver_uid", receiverUID);
+        hashMap.put("receiver_name", receiverName);
+        hashMap.put("message", message);
+        databaseReference.child("Messages").push().setValue(hashMap);
+
+        // Set Message Edit Text to empty
+        mMessage.setText("");
+    }
+
+    private void checkUserStatus() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            currentUserUID = user.getUid();
+
+            Query userQuery = userRef.orderByChild("uid").equalTo(currentUserUID);
+            // Get Receiver Profile Image and Name
+            userQuery.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        currentUserName = ds.child("name").getValue().toString();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        checkUserStatus();
+        super.onStart();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.action_search).setVisible(false);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Get Item ID
+        int id = item.getItemId();
+
+        if (id == R.id.action_logout) {
+            mAuth.signOut();
+            checkUserStatus();
+        }
+        return super.onOptionsItemSelected(item);
+
     }
 }

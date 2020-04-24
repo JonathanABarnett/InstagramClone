@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +32,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -101,7 +104,19 @@ public class ChatActivity extends AppCompatActivity {
                     receiverName = ds.child("name").getValue().toString();
                     receiverImage = ds.child("image").getValue().toString();
 
+                    String onlineStatus = ds.child("online_status").getValue().toString();
+
+                    if (onlineStatus.equals("Online")) {
+                        mUserStatus.setText(onlineStatus);
+                    } else {
+                        Calendar calendar = Calendar.getInstance(Locale.US);
+                        calendar.setTimeInMillis(Long.parseLong(onlineStatus));
+                        String dateTime = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
+                        mUserStatus.setText("Last seen online: " + dateTime);
+                    }
+
                     mName.setText(receiverName);
+
 
                     try {
                         Picasso.get().load(receiverImage).placeholder(R.drawable.ic_default_img_blue).into(mProfileImage);
@@ -231,16 +246,36 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    private void checkOnlineStatus(String status) {
+        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Users").child(currentUserUID);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("online_status", status);
+
+        dbRef.updateChildren(hashMap);
+    }
+
     @Override
     protected void onStart() {
         checkUserStatus();
+        checkOnlineStatus("Online");
         super.onStart();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+        String timeStamp = String.valueOf(System.currentTimeMillis());
+
+        checkOnlineStatus(timeStamp);
+
         userRefForSeen.removeEventListener(seenListener);
+    }
+
+    @Override
+    protected void onResume() {
+        checkOnlineStatus("Online");
+        super.onResume();
     }
 
     @Override

@@ -235,7 +235,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -253,6 +252,7 @@ public class LoginActivity extends AppCompatActivity {
                                 hashMap.put("email", email);
                                 hashMap.put("uid", uid);
                                 hashMap.put("name", "");
+                                hashMap.put("online_status", "Online");
                                 hashMap.put("phone", "");
                                 hashMap.put("image", "");
                                 hashMap.put("cover", "");

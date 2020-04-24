@@ -58,7 +58,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyHolder
 
         Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(Long.parseLong(timeStamp));
-        String dateTime = DateFormat.format("MM/dd/yyyy hh:mm aa", calendar).toString();
+        String dateTime = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
 
         holder.messageTV.setText(message);
         holder.timeTV.setText(dateTime);

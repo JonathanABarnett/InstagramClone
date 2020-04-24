@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alaythiaproductions.instagramclone.AddPostActivity;
 import com.alaythiaproductions.instagramclone.MainActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -338,7 +339,7 @@ public class ProfileFragment extends Fragment {
                     boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
                     if (writeStorageAccepted) {
-                        // Permission Enable
+                        // Permission Enabled
                         pickFromGallery();
                     } else {
                         // Permission Denied
@@ -472,6 +473,10 @@ public class ProfileFragment extends Fragment {
         if (id == R.id.action_logout) {
             mAuth.signOut();
             checkUserStatus();
+        }
+
+        if (id == R.id.action_add_post) {
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

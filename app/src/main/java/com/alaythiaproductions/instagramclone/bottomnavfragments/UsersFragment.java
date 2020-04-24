@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alaythiaproductions.instagramclone.AddPostActivity;
 import com.alaythiaproductions.instagramclone.DashboardActivity;
 import com.alaythiaproductions.instagramclone.MainActivity;
 import com.alaythiaproductions.instagramclone.R;
@@ -158,6 +159,9 @@ public class UsersFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_main, menu);
 
+        // Hide Add Post Icon from fragment
+        menu.findItem(R.id.action_add_post).setVisible(false);
+
         MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
 
@@ -204,6 +208,7 @@ public class UsersFragment extends Fragment {
             mAuth.signOut();
             checkUserStatus();
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

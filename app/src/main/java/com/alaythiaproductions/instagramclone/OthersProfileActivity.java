@@ -45,6 +45,7 @@ public class OthersProfileActivity extends AppCompatActivity {
     private List<Post> postList;
     private PostAdapter postAdapter;
     private String receiverUid;
+    private String uid = null;
 
     private ImageView mCoverImage, mProfileImage;
     private TextView mName, mEmail, mPhone;
@@ -72,7 +73,7 @@ public class OthersProfileActivity extends AppCompatActivity {
         userRef = firebaseDatabase.getReference("Users");
 
         Intent intent = getIntent();
-        receiverUid = intent.getStringExtra("userUID");
+        receiverUid = intent.getStringExtra("uid");
 
         Query query = userRef.orderByChild("uid").equalTo(receiverUid);
         query.addValueEventListener(new ValueEventListener() {
@@ -199,7 +200,7 @@ public class OthersProfileActivity extends AppCompatActivity {
     private void checkUserStatus() {
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
-            receiverUid = user.getUid();
+            uid = user.getUid();
         } else {
             startActivity(new Intent(this, MainActivity.class));
             finish();

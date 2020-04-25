@@ -1,4 +1,4 @@
-package com.alaythiaproductions.notifications;
+package com.alaythiaproductions.instagramclone.notifications;
 
 public class Token {
 

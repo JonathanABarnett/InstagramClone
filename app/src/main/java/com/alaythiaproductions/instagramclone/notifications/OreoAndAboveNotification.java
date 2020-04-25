@@ -1,4 +1,4 @@
-package com.alaythiaproductions.notifications;
+package com.alaythiaproductions.instagramclone.notifications;
 
 import android.app.Notification;
 import android.app.NotificationChannel;

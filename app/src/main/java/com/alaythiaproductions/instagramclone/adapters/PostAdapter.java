@@ -1,6 +1,7 @@
 package com.alaythiaproductions.instagramclone.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,12 +9,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alaythiaproductions.instagramclone.OthersProfileActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.Post;
 import com.squareup.picasso.Picasso;
@@ -46,7 +50,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         // Get Data
-        String uid = postList.get(position).getUid();
+        final String uid = postList.get(position).getUid();
         String email = postList.get(position).getEmail();
         String name = postList.get(position).getName();
         String image = postList.get(position).getImage();
@@ -116,6 +120,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                 Toast.makeText(context, "Share...", Toast.LENGTH_SHORT).show();
             }
         });
+
+        holder.profileLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Click to go to OthersProfileActivity
+                Intent intent = new Intent(context, OthersProfileActivity.class);
+                intent.putExtra("uid", uid);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -130,6 +144,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         TextView postName, postTime, postTitle, postDescription, postLikes;
         ImageButton postMoreBtn;
         Button likeBtn, commentBtn, shareBtn;
+        LinearLayout profileLayout;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -146,6 +161,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             likeBtn = itemView.findViewById(R.id.post_like_button);
             commentBtn = itemView.findViewById(R.id.post_comment_button);
             shareBtn = itemView.findViewById(R.id.post_share_button);
+            profileLayout = itemView.findViewById(R.id.post_profile_layout);
 
         }
     }

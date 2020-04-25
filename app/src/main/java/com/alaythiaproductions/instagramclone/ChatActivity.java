@@ -24,12 +24,12 @@ import android.widget.Toast;
 import com.alaythiaproductions.instagramclone.adapters.MessageAdapter;
 import com.alaythiaproductions.instagramclone.models.Message;
 import com.alaythiaproductions.instagramclone.models.User;
-import com.alaythiaproductions.notifications.APIService;
-import com.alaythiaproductions.notifications.Client;
-import com.alaythiaproductions.notifications.Data;
-import com.alaythiaproductions.notifications.Response;
-import com.alaythiaproductions.notifications.Sender;
-import com.alaythiaproductions.notifications.Token;
+import com.alaythiaproductions.instagramclone.notifications.APIService;
+import com.alaythiaproductions.instagramclone.notifications.Client;
+import com.alaythiaproductions.instagramclone.notifications.Data;
+import com.alaythiaproductions.instagramclone.notifications.Response;
+import com.alaythiaproductions.instagramclone.notifications.Sender;
+import com.alaythiaproductions.instagramclone.notifications.Token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -256,9 +256,7 @@ public class ChatActivity extends AppCompatActivity {
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", currentUserUID);
-       // hashMap.put("sender_name", currentUserName);
         hashMap.put("receiver", receiverUID);
-      //  hashMap.put("receiver_name", receiverName);
         hashMap.put("message", message);
         hashMap.put("timestamp",timeStamp);
         hashMap.put("isSeen", false);
@@ -387,7 +385,9 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        // Hide SearchView and Add Posts
         menu.findItem(R.id.action_search).setVisible(false);
+        menu.findItem(R.id.action_add_post).setVisible(false);
 
         return super.onCreateOptionsMenu(menu);
     }

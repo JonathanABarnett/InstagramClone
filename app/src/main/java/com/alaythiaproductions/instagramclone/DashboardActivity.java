@@ -8,22 +8,19 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ChatListFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.HomeFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ProfileFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.UsersFragment;
-import com.alaythiaproductions.notifications.Token;
+import com.alaythiaproductions.instagramclone.notifications.Token;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessagingService;
 
 public class DashboardActivity extends AppCompatActivity {
 

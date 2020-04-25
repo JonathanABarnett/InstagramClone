@@ -1,4 +1,4 @@
-package com.alaythiaproductions.notifications;
+package com.alaythiaproductions.instagramclone.notifications;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

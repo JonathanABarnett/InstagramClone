@@ -1,4 +1,4 @@
-package com.alaythiaproductions.notifications;
+package com.alaythiaproductions.instagramclone.notifications;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

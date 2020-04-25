@@ -18,6 +18,7 @@ import com.alaythiaproductions.instagramclone.ChatActivity;
 import com.alaythiaproductions.instagramclone.OthersProfileActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.User;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

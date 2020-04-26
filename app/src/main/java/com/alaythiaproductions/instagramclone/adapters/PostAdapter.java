@@ -22,6 +22,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alaythiaproductions.instagramclone.AddPostActivity;
 import com.alaythiaproductions.instagramclone.OthersProfileActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.Post;
@@ -156,7 +157,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         // Show Delete option for posts of current user
         if (uid.equals(currentUserId)) {
             // Add items to Menu
-            popupMenu.getMenu().add(Menu.NONE, 0, 0, "Delete");
+            popupMenu.getMenu().add(Menu.NONE, 0, 0, "Edit");
+            popupMenu.getMenu().add(Menu.NONE, 1, 0, "Delete");
         }
 
         //Item Click Listener
@@ -165,6 +167,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == 0) {
+                    // Edit Selected
+                    Intent intent = new Intent(context, AddPostActivity.class);
+                    intent.putExtra("key", "editPost");
+                    intent.putExtra("editPostId", postId);
+                    context.startActivity(intent);
+                } else if (id == 1) {
                     // Delete Selected
                     beginDelete(postId, postPicture);
                 }

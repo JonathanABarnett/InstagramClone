@@ -54,8 +54,6 @@ public class DashboardActivity extends AppCompatActivity {
 
         checkUserStatus();
 
-        // Update Token
-        updateToken(FirebaseInstanceId.getInstance().getToken());
     }
 
     @Override
@@ -124,6 +122,9 @@ public class DashboardActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("Current_USERID", mUserUID);
             editor.apply();
+
+            // Update Token
+            updateToken(FirebaseInstanceId.getInstance().getToken());
         } else {
             startActivity(new Intent(DashboardActivity.this, MainActivity.class));
         }

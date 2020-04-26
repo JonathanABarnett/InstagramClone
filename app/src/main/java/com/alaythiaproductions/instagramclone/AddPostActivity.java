@@ -93,10 +93,10 @@ public class AddPostActivity extends AppCompatActivity {
 
         // Get Edit info from Intent
         Intent intent = getIntent();
-        final String isUpdateKey = intent.getStringExtra("key").toString();
-        final String editPostId = intent.getStringExtra("editPostId").toString();
+        final String isUpdateKey = intent.getStringExtra("key");
+        final String editPostId = intent.getStringExtra("editPostId");
         // Validate for updating
-        if (isUpdateKey.equals("editPost")) {
+        if (isUpdateKey != null && isUpdateKey.equals("editPost")) {
             // Edit Post
             actionBar.setTitle("Update Post");
             mPostBtn.setText("Update");
@@ -148,7 +148,7 @@ public class AddPostActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (isUpdateKey.equals("editPost")) {
+                if (isUpdateKey != null && isUpdateKey.equals("editPost")) {
                     beginUpdate(title, description, editPostId);
                 } else {
                     uploadData(title, description);
@@ -402,6 +402,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("post_title", title);
                                 hashMap.put("post_description", description);
                                 hashMap.put("post_image", downloadUri);
+                                hashMap.put("post_likes", "0");
                                 hashMap.put("post_time", timeStamp);
 
                                 // Path to Store Post Data
@@ -453,6 +454,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("post_title", title);
             hashMap.put("post_description", description);
             hashMap.put("post_image", "noImage");
+            hashMap.put("post_likes", "0");
             hashMap.put("post_time", timeStamp);
 
             // Path to Store Post Data

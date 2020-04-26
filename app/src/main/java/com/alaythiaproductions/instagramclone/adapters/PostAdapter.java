@@ -141,16 +141,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (mProcessLike) {
-                            if (dataSnapshot.child(postId).hasChild(currentUserUid)) {
+                            if (dataSnapshot.child(postId).hasChild(currentUserUid) && (dataSnapshot.child(postId).child(currentUserUid).getValue().toString().equals("1"))) {
                                 // Already Liked - remove Like
                                 postsRef.child(postId).child("post_likes").setValue("" + (post_likes - 1));
-                                likesRef.child(postId).child(currentUserUid).removeValue();
+                                likesRef.child(postId).child(currentUserUid).setValue("0");
                                 mProcessLike = false;
                             } else {
                                 // Has Not been liked
                                 postsRef.child(postId).child("post_likes").setValue("" + (post_likes + 1));
-                                likesRef.child(postId).child(currentUserUid).setValue("Liked");
-                                mProcessLike = true;
+                                likesRef.child(postId).child(currentUserUid).setValue("1");
+                                mProcessLike = false;
                             }
                         }
                     }
@@ -196,7 +196,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         likesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(postKey).hasChild(currentUserUid)) {
+                if (dataSnapshot.child(postKey).hasChild(currentUserUid) && (dataSnapshot.child(postKey).child(currentUserUid).getValue().toString().equals("1"))) {
                     // User has liked this post
                     holder.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
                     holder.likeBtn.setText("Liked");

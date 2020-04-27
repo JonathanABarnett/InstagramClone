@@ -89,19 +89,20 @@ public class PostDetailsActivity extends AppCompatActivity {
         // Get Post Info from AdapterPost
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
-        myName = intent.getStringExtra("name");
+        //myName = intent.getStringExtra("name");
 
         init();
-        loadPostInfo();
 
         checkUserStatus();
+
+        loadPostInfo();
 
         loadUserInfo();
 
         setLikes();
 
         // Set subtitle
-        actionBar.setSubtitle("Signed in as: " + myName);
+        actionBar.setSubtitle("Signed in as: " + myEmail);
 
         loadComments();
 
@@ -150,7 +151,7 @@ public class PostDetailsActivity extends AppCompatActivity {
                     commentList.add(comment);
 
                     // Setup Adapter
-                    commentAdapter = new CommentAdapter(getApplicationContext(), commentList);
+                    commentAdapter = new CommentAdapter(getApplicationContext(), commentList, myUid, postId);
                     recyclerView.setAdapter(commentAdapter);
                 }
             }
@@ -303,18 +304,11 @@ public class PostDetailsActivity extends AppCompatActivity {
                         postsRef.child(postId).child("post_likes").setValue("" + (Integer.parseInt(postLikes) - 1));
                         likesRef.child(postId).child(myUid).setValue("0");
                         mProcessLike = false;
-
-//                        likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_like_black, 0, 0, 0);
-//                        likeBtn.setText("Like");
-
                     } else {
                         // Has Not been liked
                         postsRef.child(postId).child("post_likes").setValue("" + (postLikes + 1));
                         likesRef.child(postId).child(myUid).setValue("1");
                         mProcessLike = false;
-
-//                        likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
-//                        likeBtn.setText("Liked");
                     }
                 }
             }
@@ -477,7 +471,6 @@ public class PostDetailsActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void checkUserStatus() {
@@ -485,7 +478,6 @@ public class PostDetailsActivity extends AppCompatActivity {
         if (user != null) {
             myEmail = user.getEmail();
             myUid = user.getUid();
-
         } else {
             startActivity(new Intent(this, MainActivity.class));
             finish();

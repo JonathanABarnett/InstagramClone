@@ -48,10 +48,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
 
     private Context context;
     List<Post> postList;
-    private String currentUserUid;
+    private String currentUserUid, currentName;
 
     private DatabaseReference likesRef;
     private DatabaseReference postsRef;
+    private DatabaseReference userRef;
 
     private boolean mProcessLike = false;
 
@@ -59,8 +60,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         this.context = context;
         this.postList = postList;
         currentUserUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        userRef = FirebaseDatabase.getInstance().getReference("Users");
+
         likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+
     }
 
     @NonNull
@@ -173,7 +178,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                 // Send postId to PostDetailsActivity
                 Intent intent = new Intent(context, PostDetailsActivity.class);
                 intent.putExtra("postId", postId);
-                intent.putExtra("name", name);
                 context.startActivity(intent);
 
             }

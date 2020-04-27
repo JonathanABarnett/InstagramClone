@@ -2,12 +2,12 @@ package com.alaythiaproductions.instagramclone.models;
 
 public class Comment {
 
-    private String id, comment, timestamp, uid, email, profile_image, name;
+    private String comment_id, comment, timestamp, uid, email, profile_image, name;
 
     public Comment() {}
 
     public Comment(String id, String comment, String timestamp, String uid, String email, String profile_image, String name) {
-        this.id = id;
+        this.comment_id = id;
         this.comment = comment;
         this.timestamp = timestamp;
         this.uid = uid;
@@ -16,12 +16,12 @@ public class Comment {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public String getComment_id() {
+        return comment_id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setComment_id(String comment_id) {
+        this.comment_id = comment_id;
     }
 
     public String getComment() {

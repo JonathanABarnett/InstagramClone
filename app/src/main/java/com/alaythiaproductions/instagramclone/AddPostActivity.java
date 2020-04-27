@@ -403,6 +403,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("post_description", description);
                                 hashMap.put("post_image", downloadUri);
                                 hashMap.put("post_likes", "0");
+                                hashMap.put("post_comments", "0");
                                 hashMap.put("post_time", timeStamp);
 
                                 // Path to Store Post Data

@@ -98,13 +98,31 @@
             android:layout_height="200dp"
             android:background="#fff" />
 
-        <!-- Number of Likes -->
-        <TextView
-            android:id="@+id/post_likes"
-            android:text="1.1k Likes"
-            android:textColor="@color/colorPrimaryDark"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <!-- Number of Likes -->
+            <TextView
+                android:id="@+id/post_likes"
+                android:text="1.1k Likes"
+                android:layout_weight="1"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- Number of Comments -->
+            <TextView
+                android:id="@+id/post_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="textEnd"
+                android:text="1.2k Comments"
+                android:textColor="@color/colorPrimaryDark" />
+
+        </LinearLayout>
 
         <!-- Line Break -->
         <View

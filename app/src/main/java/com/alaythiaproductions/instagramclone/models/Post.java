@@ -2,16 +2,17 @@ package com.alaythiaproductions.instagramclone.models;
 
 public class Post {
 
-    private String post_id, post_title, post_description, post_likes, post_image, post_time, uid, name, email, image;
+    private String post_id, post_title, post_description, post_likes, post_comments, post_image, post_time, uid, name, email, image;
 
     public Post() {
     }
 
-    public Post(String post_id, String post_title, String post_description, String post_likes, String post_image, String post_time, String uid, String name, String email, String image) {
+    public Post(String post_id, String post_title, String post_description, String post_likes, String post_comments, String post_image, String post_time, String uid, String name, String email, String image) {
         this.post_id = post_id;
         this.post_title = post_title;
         this.post_description = post_description;
         this.post_likes = post_likes;
+        this.post_comments = post_comments;
         this.post_image = post_image;
         this.post_time = post_time;
         this.uid = uid;
@@ -50,6 +51,14 @@ public class Post {
 
     public void setPost_likes(String post_likes) {
         this.post_likes = post_likes;
+    }
+
+    public String getPost_comments() {
+        return post_comments;
+    }
+
+    public void setPost_comments(String post_comments) {
+        this.post_comments = post_comments;
     }
 
     public String getPost_image() {

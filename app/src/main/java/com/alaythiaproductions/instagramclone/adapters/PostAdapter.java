@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.alaythiaproductions.instagramclone.AddPostActivity;
 import com.alaythiaproductions.instagramclone.OthersProfileActivity;
+import com.alaythiaproductions.instagramclone.PostDetailsActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.Post;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -84,6 +85,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         final String postPicture = postList.get(position).getPost_image();
         String postTimeStamp = postList.get(position).getPost_time();
         final String postLikes = postList.get(position).getPost_likes();
+        String postComments = postList.get(position).getPost_comments();
 
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(postTimeStamp));
@@ -95,6 +97,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         holder.postTitle.setText(postTitle);
         holder.postDescription.setText(postDescription);
         holder.postLikes.setText(postLikes + " Likes");
+        holder.postComments.setText(postLikes + " Comments");
         // Set Likes for Each Post
         setLikes(holder, postId);
 
@@ -167,7 +170,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         holder.commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Comment...", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(context, PostDetailsActivity.class);
+                intent.putExtra("postId", postId);
+                context.startActivity(intent);
+
             }
         });
 
@@ -224,6 +230,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             popupMenu.getMenu().add(Menu.NONE, 0, 0, "Edit");
             popupMenu.getMenu().add(Menu.NONE, 1, 0, "Delete");
         }
+        popupMenu.getMenu().add(Menu.NONE, 2, 0, "View Details");
 
         //Item Click Listener
         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -231,14 +238,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == 0) {
-                    // Edit Selected
+                    // Edit Clicked
                     Intent intent = new Intent(context, AddPostActivity.class);
                     intent.putExtra("key", "editPost");
                     intent.putExtra("editPostId", postId);
                     context.startActivity(intent);
                 } else if (id == 1) {
-                    // Delete Selected
+                    // Delete Clicked
                     beginDelete(postId, postPicture);
+                } else if (id == 2) {
+                    // Details Clicked
+                    Intent intent = new Intent(context, PostDetailsActivity.class);
+                    intent.putExtra("postId", postId);
+                    context.startActivity(intent);
                 }
                 return false;
             }
@@ -325,7 +337,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
 
         // Views from row_posts
         ImageView postPicture, postProfileImage;
-        TextView postName, postTime, postTitle, postDescription, postLikes;
+        TextView postName, postTime, postTitle, postDescription, postLikes, postComments;
         ImageButton postMoreBtn;
         Button likeBtn, commentBtn, shareBtn;
         LinearLayout profileLayout;
@@ -341,6 +353,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             postTitle = itemView.findViewById(R.id.post_title);
             postDescription = itemView.findViewById(R.id.post_description);
             postLikes = itemView.findViewById(R.id.post_likes);
+            postComments = itemView.findViewById(R.id.post_comments);
             postMoreBtn = itemView.findViewById(R.id.post_more_button);
             likeBtn = itemView.findViewById(R.id.post_like_button);
             commentBtn = itemView.findViewById(R.id.post_comment_button);

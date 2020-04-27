@@ -77,7 +77,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         // Get Data
         final String uid = postList.get(position).getUid();
         String email = postList.get(position).getEmail();
-        String name = postList.get(position).getName();
+        final String name = postList.get(position).getName();
         String image = postList.get(position).getImage();
         final String postId = postList.get(position).getPost_id();
         String postTitle = postList.get(position).getPost_title();
@@ -97,7 +97,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         holder.postTitle.setText(postTitle);
         holder.postDescription.setText(postDescription);
         holder.postLikes.setText(postLikes + " Likes");
-        holder.postComments.setText(postLikes + " Comments");
+        holder.postComments.setText(postComments + " Comments");
         // Set Likes for Each Post
         setLikes(holder, postId);
 
@@ -170,8 +170,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         holder.commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Send postId to PostDetailsActivity
                 Intent intent = new Intent(context, PostDetailsActivity.class);
                 intent.putExtra("postId", postId);
+                intent.putExtra("name", name);
                 context.startActivity(intent);
 
             }

@@ -79,6 +79,7 @@ public class PostDetailsActivity extends AppCompatActivity {
         // Get Post Info from AdapterPost
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
+        myName = intent.getStringExtra("name");
 
         init();
         loadPostInfo();
@@ -333,7 +334,7 @@ public class PostDetailsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (mProcessComment) {
                     String comments = dataSnapshot.child("post_comments").getValue().toString();
-                    int newCommentTotal = Integer.parseInt(comments + 1);
+                    int newCommentTotal = Integer.parseInt(comments) + 1;
                     ref.child("post_comments").setValue("" + newCommentTotal);
                     mProcessComment = false;
                 }

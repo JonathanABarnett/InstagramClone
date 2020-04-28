@@ -403,7 +403,7 @@ public class ChatActivity extends AppCompatActivity {
         String timeStamp = String.valueOf(System.currentTimeMillis());
 
         checkOnlineStatus(timeStamp);
-        checkTypingStatus("No One");
+        checkTypingStatus("Not Typing");
 
         userRefForSeen.removeEventListener(seenListener);
     }

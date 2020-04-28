@@ -76,7 +76,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
                         }
                         if (which == 1) {
                             // Chat clicked
-                            // Show messages
+                            // Go to ChatActivity
                             Intent intent = new Intent(context, ChatActivity.class);
                             intent.putExtra("userUID", userUID);
                             intent.putExtra("userName", userName);

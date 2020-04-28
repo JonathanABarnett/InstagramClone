@@ -6,8 +6,8 @@ public class Comment {
 
     public Comment() {}
 
-    public Comment(String id, String comment, String timestamp, String uid, String email, String profile_image, String name) {
-        this.comment_id = id;
+    public Comment(String comment_id, String comment, String timestamp, String uid, String email, String profile_image, String name) {
+        this.comment_id = comment_id;
         this.comment = comment;
         this.timestamp = timestamp;
         this.uid = uid;

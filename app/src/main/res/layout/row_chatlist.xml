@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:contentPadding="3dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- ImageView: Profile Image -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/chatlist_profile_image_iv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_default_img_blue"/>
+
+        <!-- ImageView: Online/Offline Status -->
+        <ImageView
+            android:id="@+id/chatlist_online_status_iv"
+            android:layout_width="25dp"
+            android:layout_height="25dp" />
+
+        <!-- TextView: Username -->
+        <TextView
+            android:id="@+id/chatlist_username_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Other Name"
+            android:textSize="18sp"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/chatlist_profile_image_iv" />
+
+        <!-- TextView: Last Message -->
+        <TextView
+            android:id="@+id/chatlist_last_message_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Last Name"
+            android:textSize="18sp"
+            android:maxLines="2"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/chatlist_profile_image_iv"
+            android:layout_below="@+id/chatlist_username_tv"/>
+    </RelativeLayout>
+
+    <!-- Line Break -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F5F0F0" />
+
+</androidx.cardview.widget.CardView>

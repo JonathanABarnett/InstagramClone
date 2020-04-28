@@ -196,7 +196,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             public void onClick(View v) {
                 // Click to go to OthersProfileActivity
                 Intent intent = new Intent(context, OthersProfileActivity.class);
-                intent.putExtra("uid", uid);
+                intent.putExtra("userUID", uid); //Check Again
                 context.startActivity(intent);
             }
         });

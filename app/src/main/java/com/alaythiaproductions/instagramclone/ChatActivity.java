@@ -278,6 +278,38 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
+
+        // Create ChatList Node for DB
+        final DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("ChatList").child(currentUserUID).child(receiverUID);
+        chatRef1.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    chatRef1.child("id").setValue(receiverUID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Create ChatList Node for DB
+        final DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("ChatList").child(receiverUID).child(currentUserUID);
+        chatRef2.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()) {
+                    chatRef2.child("id").setValue(currentUserUID);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void sendNotification(final String receiverUID, final String name, final String message) {

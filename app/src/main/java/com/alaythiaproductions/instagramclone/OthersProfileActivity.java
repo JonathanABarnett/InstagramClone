@@ -73,7 +73,7 @@ public class OthersProfileActivity extends AppCompatActivity {
         userRef = firebaseDatabase.getReference("Users");
 
         Intent intent = getIntent();
-        receiverUid = intent.getStringExtra("uid");
+        receiverUid = intent.getStringExtra("userUID");
 
         Query query = userRef.orderByChild("uid").equalTo(receiverUid);
         query.addValueEventListener(new ValueEventListener() {
@@ -141,7 +141,6 @@ public class OthersProfileActivity extends AppCompatActivity {
 
                     // Add to List
                     postList.add(post);
-
                     // Adapter
                     postAdapter = new PostAdapter(OthersProfileActivity.this, postList);
                     // Set Adapter to Recyclerview

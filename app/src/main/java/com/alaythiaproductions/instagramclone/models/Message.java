@@ -47,11 +47,11 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public boolean isSeen() {
+    public boolean getIsSeen() {
         return isSeen;
     }
 
-    public void setSeen(boolean seen) {
-        isSeen = seen;
+    public void setIsSeen(boolean isSeen) {
+        isSeen = this.isSeen;
     }
 }

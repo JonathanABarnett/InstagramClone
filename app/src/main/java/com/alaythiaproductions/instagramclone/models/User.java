@@ -2,11 +2,11 @@ package com.alaythiaproductions.instagramclone.models;
 
 public class User {
 
-    private String uid, name, email, search, phone, image, cover;
+    private String uid, name, email, search, phone, image, cover, online_status, typing_status;
 
     public User() {}
 
-    public User(String uid, String name, String email, String search, String phone, String image, String cover) {
+    public User(String uid, String name, String email, String search, String phone, String image, String cover, String onlineStatus, String typing) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -14,6 +14,8 @@ public class User {
         this.phone = phone;
         this.image = image;
         this.cover = cover;
+        this.online_status = onlineStatus;
+        this.typing_status = typing;
     }
 
     public String getUid() {
@@ -70,5 +72,21 @@ public class User {
 
     public void setCover(String cover) {
         this.cover = cover;
+    }
+
+    public String getOnline_status() {
+        return online_status;
+    }
+
+    public void setOnline_status(String online_status) {
+        this.online_status = online_status;
+    }
+
+    public String getTyping_status() {
+        return typing_status;
+    }
+
+    public void setTyping_status(String typing_status) {
+        this.typing_status = typing_status;
     }
 }

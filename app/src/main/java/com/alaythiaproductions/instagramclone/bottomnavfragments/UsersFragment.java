@@ -81,6 +81,7 @@ public class UsersFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 userList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
                     User user = ds.getValue(User.class);
 
                     if (!user.getUid().equals(currentUser.getUid())){

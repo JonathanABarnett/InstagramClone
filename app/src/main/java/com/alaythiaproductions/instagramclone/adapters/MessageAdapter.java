@@ -66,10 +66,23 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyHolder
     public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         String message = chatList.get(position).getMessage();
         String timeStamp = chatList.get(position).getTimestamp();
+        String type = chatList.get(position).getType();
 
         Calendar calendar = Calendar.getInstance(Locale.US);
         calendar.setTimeInMillis(Long.parseLong(timeStamp));
         String dateTime = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
+
+        if (type.equals("text")) {
+            holder.messageTV.setVisibility(View.VISIBLE);
+            holder.messageIV.setVisibility(View.GONE);
+
+            holder.messageTV.setText(message);
+        } else {
+            holder.messageTV.setVisibility(View.GONE);
+            holder.messageIV.setVisibility(View.VISIBLE);
+
+            Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(holder.messageIV);
+        }
 
         holder.messageTV.setText(message);
         holder.timeTV.setText(dateTime);
@@ -161,7 +174,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyHolder
     // View Holder
     class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView profileImage;
+        ImageView profileImage, messageIV;
         TextView messageTV, timeTV, isSeenTV;
         LinearLayout messageLayout;
 
@@ -173,6 +186,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MyHolder
             timeTV = itemView.findViewById(R.id.chat_time);
             isSeenTV = itemView.findViewById(R.id.chat_seen);
             messageLayout = itemView.findViewById(R.id.message_layout);
+            messageIV = itemView.findViewById(R.id.chat_message_image);
         }
     }
 }

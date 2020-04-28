@@ -2,17 +2,18 @@ package com.alaythiaproductions.instagramclone.models;
 
 public class Message {
 
-    private String message, receiver, sender, timestamp;
+    private String message, receiver, sender, timestamp, type;
     boolean isSeen;
 
     public Message() {}
 
-    public Message(String message, String receiver, String sender, String timestamp, boolean isSeen) {
+    public Message(String message, String receiver, String sender, String timestamp, boolean isSeen, String type) {
         this.message = message;
         this.receiver = receiver;
         this.sender = sender;
         this.timestamp = timestamp;
         this.isSeen = isSeen;
+        this.type = type;
     }
 
     public String getMessage() {
@@ -53,5 +54,13 @@ public class Message {
 
     public void setIsSeen(boolean isSeen) {
         isSeen = this.isSeen;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -67,6 +67,14 @@
         android:background="#fff"
         android:gravity="center">
 
+        <!-- Image Button to Send Image -->
+        <ImageButton
+            android:id="@+id/attach_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:src="@drawable/ic_attach_black"/>
+
         <EditText
             android:id="@+id/chat_message"
             android:layout_width="0dp"

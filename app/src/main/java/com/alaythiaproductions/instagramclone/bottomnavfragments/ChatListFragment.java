@@ -136,7 +136,11 @@ public class ChatListFragment extends Fragment {
                     }
                     if (message.getReceiver().equals(currentUser.getUid()) && message.getSender().equals(userId)
                     || message.getReceiver().equals(userId) && message.getSender().equals(currentUser.getUid())) {
-                        lastMessage = message.getMessage();
+                        if (message.getType().equals("image")) {
+                            lastMessage = "Sent an image";
+                        } else {
+                            lastMessage = message.getMessage();
+                        }
                     }
                 }
                 chatListAdapter.setLastMessageMap(userId, lastMessage);

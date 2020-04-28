@@ -4,11 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -42,6 +46,8 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -129,6 +135,67 @@ public class PostDetailsActivity extends AppCompatActivity {
                 showMoreOptions();
             }
         });
+
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String title = post_time.getText().toString().trim();
+                String description = post_description.getText().toString().trim();
+
+                BitmapDrawable bitmapDrawable = (BitmapDrawable)post_image.getDrawable();
+                if (bitmapDrawable == null) {
+                    // Post Without Image
+                    shareTextOnly(title, description);
+                } else {
+                    // Post With Image
+                    Bitmap bitmap = bitmapDrawable.getBitmap();
+                    shareImageAndText(title, description, bitmap);
+
+                }
+            }
+        });
+    }
+    private void shareTextOnly(String postTitle, String postDescription) {
+        String shareBody = postTitle + "\n" + postDescription;
+
+        // Share Intent
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+        intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        startActivity(Intent.createChooser(intent, "Share Via"));
+    }
+
+    private void shareImageAndText(String postTitle, String postDescription, Bitmap bitmap) {
+        String shareBody = postTitle + "\n" + postDescription;
+
+        Uri uri = saveImageToShare(bitmap);
+
+        // Share Intent
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Insert Subject");
+        intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        intent.setType("image/png");
+        startActivity(Intent.createChooser(intent, "Share Via"));
+
+    }
+
+    private Uri saveImageToShare(Bitmap bitmap) {
+        File imageFolder = new File(getCacheDir(), "images");
+        Uri uri = null;
+        try {
+            imageFolder.mkdirs(); // Create if doesn't exist
+            File file = new File(imageFolder, "shared_image.png");
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.flush();
+            stream.close();
+            uri = FileProvider.getUriForFile(this, "com.alaythiaproductions.instagramclone.fileprovider", file);
+        } catch (Exception e) {
+            Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return uri;
     }
 
     private void loadComments() {

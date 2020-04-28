@@ -3,6 +3,9 @@ package com.alaythiaproductions.instagramclone.adapters;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +44,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -85,8 +91,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         final String name = postList.get(position).getName();
         String image = postList.get(position).getImage();
         final String postId = postList.get(position).getPost_id();
-        String postTitle = postList.get(position).getPost_title();
-        String postDescription = postList.get(position).getPost_description();
+        final String postTitle = postList.get(position).getPost_title();
+        final String postDescription = postList.get(position).getPost_description();
         final String postPicture = postList.get(position).getPost_image();
         String postTimeStamp = postList.get(position).getPost_time();
         final String postLikes = postList.get(position).getPost_likes();
@@ -187,7 +193,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Share...", Toast.LENGTH_SHORT).show();
+                // Get Image from ImageView
+                BitmapDrawable bitmapDrawable = (BitmapDrawable)holder.postPicture.getDrawable();
+                if (bitmapDrawable == null) {
+                    // Post Without Image
+                    shareTextOnly(postTitle, postDescription);
+                } else {
+                    // Post With Image
+                    Bitmap bitmap = bitmapDrawable.getBitmap();
+                    shareImageAndText(postTitle, postDescription, bitmap);
+
+                }
             }
         });
 
@@ -202,7 +218,48 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
         });
     }
 
+    private void shareTextOnly(String postTitle, String postDescription) {
+        String shareBody = postTitle + "\n" + postDescription;
 
+        // Share Intent
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Subject Here");
+        intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        context.startActivity(Intent.createChooser(intent, "Share Via"));
+    }
+
+    private void shareImageAndText(String postTitle, String postDescription, Bitmap bitmap) {
+        String shareBody = postTitle + "\n" + postDescription;
+
+        Uri uri = saveImageToShare(bitmap);
+
+        // Share Intent
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Insert Subject");
+        intent.putExtra(Intent.EXTRA_TEXT, shareBody);
+        intent.setType("image/png");
+        context.startActivity(Intent.createChooser(intent, "Share Via"));
+
+    }
+
+    private Uri saveImageToShare(Bitmap bitmap) {
+        File imageFolder = new File(context.getCacheDir(), "images");
+        Uri uri = null;
+        try {
+            imageFolder.mkdirs(); // Create if doesn't exist
+            File file = new File(imageFolder, "shared_image.png");
+            FileOutputStream stream = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
+            stream.flush();
+            stream.close();
+            uri = FileProvider.getUriForFile(context, "com.alaythiaproductions.instagramclone.fileprovider", file);
+        } catch (Exception e) {
+            Toast.makeText(context, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        return uri;
+    }
 
     private void setLikes(final MyHolder holder, final String postKey) {
         likesRef.addValueEventListener(new ValueEventListener() {

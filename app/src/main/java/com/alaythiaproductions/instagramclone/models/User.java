@@ -3,10 +3,11 @@ package com.alaythiaproductions.instagramclone.models;
 public class User {
 
     private String uid, name, email, search, phone, image, cover, online_status, typing_status;
+    private boolean isBlocked = false;
 
     public User() {}
 
-    public User(String uid, String name, String email, String search, String phone, String image, String cover, String onlineStatus, String typing) {
+    public User(String uid, String name, String email, String search, String phone, String image, String cover, String onlineStatus, String typing, boolean isBlocked) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -16,6 +17,7 @@ public class User {
         this.cover = cover;
         this.online_status = onlineStatus;
         this.typing_status = typing;
+        this.isBlocked = isBlocked;
     }
 
     public String getUid() {
@@ -88,5 +90,13 @@ public class User {
 
     public void setTyping_status(String typing_status) {
         this.typing_status = typing_status;
+    }
+
+    public boolean getIsBlocked() {
+        return isBlocked;
+    }
+
+    public void setIsBlocked(boolean isBlocked) {
+        this.isBlocked = isBlocked;
     }
 }

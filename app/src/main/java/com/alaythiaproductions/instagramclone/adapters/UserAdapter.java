@@ -18,9 +18,18 @@ import com.alaythiaproductions.instagramclone.ChatActivity;
 import com.alaythiaproductions.instagramclone.OthersProfileActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
@@ -28,9 +37,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
     private Context context;
     private List<User> userList;
 
+    // Get Current UserId
+    private FirebaseAuth mAuth;
+    private String currentUID;
+
     public UserAdapter(Context context, List<User> userList) {
         this.context = context;
         this.userList = userList;
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUID = mAuth.getUid();
     }
 
     @NonNull
@@ -43,7 +59,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyHolder holder, final int position) {
         // Get Data
         final String userUID = userList.get(position).getUid();
         String userImage = userList.get(position).getImage();
@@ -58,6 +74,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
         } catch (Exception e) {
 
         }
+
+        holder.mBlockIV.setImageResource(R.drawable.ic_unblocked_green);
+        // Check if each user is blocked or not
+        checkIsBlocked(userUID, holder, position);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,10 +97,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
                         if (which == 1) {
                             // Chat clicked
                             // Go to ChatActivity
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            intent.putExtra("userUID", userUID);
-                            intent.putExtra("userName", userName);
-                            context.startActivity(intent);
+                            inBlockedList(userUID);
                         }
                     }
                 });
@@ -88,7 +105,121 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
             }
         });
 
+        // Click to Block/Unblock User
+        holder.mBlockIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userList.get(position).getIsBlocked()) {
+                    unblockUser(userUID);
+                } else {
+                    blockUser(userUID);
+                }
+            }
+        });
+    }
 
+    private void inBlockedList(final String userUID) {
+        // If current user is blocked by other user
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(userUID).child("BlockedUsers").orderByChild("uid").equalTo(currentUID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.exists()) {
+                                Toast.makeText(context, "You are currently blocked by that user", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                        // Not blocked
+                        Intent intent = new Intent(context, ChatActivity.class);
+                        intent.putExtra("userUID", userUID);
+                        context.startActivity(intent);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void checkIsBlocked(String userUID, final MyHolder holder, final int position) {
+        // Check each user if they are blocked
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(mAuth.getUid()).child("BlockedUsers").orderByChild("uid").equalTo(userUID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.exists()) {
+                                holder.mBlockIV.setImageResource(R.drawable.ic_blocked_red);
+                                userList.get(position).setIsBlocked(true);
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    private void blockUser(String userUID) {
+        // Block the user and add to blocked users node
+
+        // Put Values in Hashmap
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", userUID);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(currentUID).child("BlockedUsers").child(userUID).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Block Successfully
+                Toast.makeText(context, "Blocked Successfully", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Failed to Block
+                Toast.makeText(context, "Error  " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void unblockUser(String userUID) {
+        // Unblock the user and add to blocked users node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(currentUID).child("BlockedUsers").orderByChild("uid").equalTo(userUID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.exists()) {
+                        ds.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Unblocked Successfully
+                                Toast.makeText(context, "Unblocked Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Failed to Unblock
+                                Toast.makeText(context, "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -98,13 +229,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.MyHolder> {
 
     class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView mProfileImage;
+        ImageView mProfileImage, mBlockIV;
         TextView mName, mEmail;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
             mProfileImage = itemView.findViewById(R.id.row_users_image);
+            mBlockIV = itemView.findViewById(R.id.blocked_imageview);
             mName = itemView.findViewById(R.id.row_users_name);
             mEmail = itemView.findViewById(R.id.row_users_email);
         }

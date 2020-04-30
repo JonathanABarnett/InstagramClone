@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alaythiaproductions.instagramclone.adapters.MessageAdapter;
+import com.alaythiaproductions.instagramclone.adapters.UserAdapter;
 import com.alaythiaproductions.instagramclone.models.Message;
 import com.alaythiaproductions.instagramclone.models.User;
 import com.alaythiaproductions.instagramclone.notifications.APIService;
@@ -73,7 +74,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private Toolbar mToolbar;
     private RecyclerView mRecyclerView;
-    private ImageView mProfileImage;
+    private ImageView mProfileImage, mBlockIV;
     private TextView mName, mUserStatus;
     private EditText mMessage;
     private ImageButton mSendBtn, mAttachBtn;
@@ -93,6 +94,8 @@ public class ChatActivity extends AppCompatActivity {
     private String receiverImage;
     private String currentUserUID;
     private String currentUserName;
+
+    boolean isBlocked = false;
 
     private APIService apiService;
     private boolean notify = false;
@@ -123,6 +126,7 @@ public class ChatActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.chat_recycler_view);
         mProfileImage = findViewById(R.id.chat_profile_image);
+        mBlockIV = findViewById(R.id.blocked_imageview);
         mName = findViewById(R.id.chat_name);
         mUserStatus = findViewById(R.id.chat_user_status);
         mMessage = findViewById(R.id.chat_message);
@@ -148,6 +152,7 @@ public class ChatActivity extends AppCompatActivity {
         receiverUID = intent.getStringExtra("userUID");
         receiverName = intent.getStringExtra("userName");
         mAuth = FirebaseAuth.getInstance();
+        currentUserUID = mAuth.getUid();
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         userRef = firebaseDatabase.getReference("Users");
@@ -244,9 +249,122 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        mBlockIV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isBlocked) {
+                    unblockUser();
+                } else {
+                    blockUser();
+                }
+            }
+        });
+
+        checkIsBlocked();
+
         readMessages();
 
         seenMessage();
+    }
+
+    private void checkIsBlocked() {
+        // Check each user if they are blocked
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(receiverUID).child("BlockedUsers").orderByChild("uid").equalTo(currentUserUID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.exists()) {
+                                mBlockIV.setImageResource(R.drawable.ic_blocked_red);
+                                isBlocked = true;
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+        ref.child(currentUserUID).child("BlockedUsers").orderByChild("uid").equalTo(receiverUID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                            if (ds.exists()) {
+                                mBlockIV.setImageResource(R.drawable.ic_blocked_red);
+                                isBlocked = true;
+
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
+    private void blockUser() {
+        // Block the user and add to blocked users node
+
+        // Put Values in Hashmap
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", receiverUID);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(currentUserUID).child("BlockedUsers").child(currentUserUID).setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Block Successfully
+                Toast.makeText(ChatActivity.this, "Blocked Successfully", Toast.LENGTH_SHORT).show();
+
+                mBlockIV.setImageResource(R.drawable.ic_blocked_red);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Failed to Block
+                Toast.makeText(ChatActivity.this, "Error  " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void unblockUser() {
+        // Unblock the user and add to blocked users node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(currentUserUID).child("BlockedUsers").orderByChild("uid").equalTo(currentUserUID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.exists()) {
+                        ds.getRef().removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Unblocked Successfully
+                                Toast.makeText(ChatActivity.this, "Unblocked Successfully", Toast.LENGTH_SHORT).show();
+                                mBlockIV.setImageResource(R.drawable.ic_unblocked_green);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Failed to Unblock
+                                Toast.makeText(ChatActivity.this, "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void showImagePickDialog() {
@@ -384,67 +502,72 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(final String message) {
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        if (!isBlocked) {
 
-        String timeStamp = String.valueOf(System.currentTimeMillis());
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("sender", currentUserUID);
-        hashMap.put("receiver", receiverUID);
-        hashMap.put("message", message);
-        hashMap.put("timestamp",timeStamp);
-        hashMap.put("isSeen", false);
-        hashMap.put("type", "text");
-        databaseReference.child("Messages").push().setValue(hashMap);
+            String timeStamp = String.valueOf(System.currentTimeMillis());
 
-        final DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(currentUserUID);
-        database.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (notify) {
-                    sendNotification(receiverUID, user.getName(), message);
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("sender", currentUserUID);
+            hashMap.put("receiver", receiverUID);
+            hashMap.put("message", message);
+            hashMap.put("timestamp", timeStamp);
+            hashMap.put("isSeen", false);
+            hashMap.put("type", "text");
+            databaseReference.child("Messages").push().setValue(hashMap);
+
+            final DatabaseReference database = FirebaseDatabase.getInstance().getReference("Users").child(currentUserUID);
+            database.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (notify) {
+                        sendNotification(receiverUID, user.getName(), message);
+                    }
+                    notify = false;
                 }
-                notify = false;
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
-        // Create ChatList Node for DB
-        final DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("ChatList").child(currentUserUID).child(receiverUID);
-        chatRef1.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    chatRef1.child("id").setValue(receiverUID);
                 }
-            }
+            });
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-        // Create ChatList Node for DB
-        final DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("ChatList").child(receiverUID).child(currentUserUID);
-        chatRef2.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    chatRef2.child("id").setValue(currentUserUID);
+            // Create ChatList Node for DB
+            final DatabaseReference chatRef1 = FirebaseDatabase.getInstance().getReference("ChatList").child(currentUserUID).child(receiverUID);
+            chatRef1.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        chatRef1.child("id").setValue(receiverUID);
+                    }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+
+            // Create ChatList Node for DB
+            final DatabaseReference chatRef2 = FirebaseDatabase.getInstance().getReference("ChatList").child(receiverUID).child(currentUserUID);
+            chatRef2.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.exists()) {
+                        chatRef2.child("id").setValue(currentUserUID);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            Toast.makeText(this, "You are currently blocked by the user", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void sendNotification(final String receiverUID, final String name, final String message) {

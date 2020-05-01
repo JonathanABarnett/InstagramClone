@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alaythiaproductions.instagramclone.AddPostActivity;
 import com.alaythiaproductions.instagramclone.OthersProfileActivity;
 import com.alaythiaproductions.instagramclone.PostDetailsActivity;
+import com.alaythiaproductions.instagramclone.PostLikedActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.Post;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -210,6 +211,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
             }
         });
 
+        // Profile Page Click
         holder.profileLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +221,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                 context.startActivity(intent);
             }
         });
+
+        // Click like count to start PostLikedActicity
+        holder.postLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, PostLikedActivity.class);
+                intent.putExtra("postId", postId);
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     private void addToOthersNotifications(String otherUid, String post_id, String message) {

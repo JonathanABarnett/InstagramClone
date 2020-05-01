@@ -154,6 +154,16 @@ public class PostDetailsActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Click like count to start PostLikedActicity
+        post_likes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PostDetailsActivity.this, PostLikedActivity.class);
+                intent.putExtra("postId", postId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void addToOthersNotifications(String otherUid, String post_id, String message) {

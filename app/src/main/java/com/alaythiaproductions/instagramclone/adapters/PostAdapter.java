@@ -47,6 +47,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -165,6 +166,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                                 postsRef.child(postId).child("post_likes").setValue("" + (post_likes + 1));
                                 likesRef.child(postId).child(currentUserUid).setValue("1");
                                 mProcessLike = false;
+
+                                addToOthersNotifications(uid, postId, "Liked your post");
                             }
                         }
                     }
@@ -214,6 +217,31 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.MyHolder> {
                 Intent intent = new Intent(context, OthersProfileActivity.class);
                 intent.putExtra("userUID", uid); //Check Again
                 context.startActivity(intent);
+            }
+        });
+    }
+
+    private void addToOthersNotifications(String otherUid, String post_id, String message) {
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("post_id", post_id);
+        hashMap.put("post_uid", otherUid);
+        hashMap.put("notification", message);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("uid", currentUserUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(otherUid).child("Notifications").child(timestamp).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
             }
         });
     }

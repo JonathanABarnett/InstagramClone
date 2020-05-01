@@ -12,6 +12,7 @@ import android.view.MenuItem;
 
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ChatListFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.HomeFragment;
+import com.alaythiaproductions.instagramclone.bottomnavfragments.NotificationsFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ProfileFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.UsersFragment;
 import com.alaythiaproductions.instagramclone.notifications.Token;
@@ -105,6 +106,14 @@ public class DashboardActivity extends AppCompatActivity {
                     FragmentTransaction chatFragmentTransaction = getSupportFragmentManager().beginTransaction();
                     chatFragmentTransaction.replace(R.id.content, chatFragment, "");
                     chatFragmentTransaction.commit();
+                    return true;
+                case R.id.nav_notifications:
+                    // Users Fragment
+                    actionBar.setTitle("Notifications");
+                    NotificationsFragment notificationsFragment = new NotificationsFragment();
+                    FragmentTransaction notificationsFragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    notificationsFragmentTransaction.replace(R.id.content, notificationsFragment, "");
+                    notificationsFragmentTransaction.commit();
                     return true;
             }
 

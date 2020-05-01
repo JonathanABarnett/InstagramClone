@@ -155,6 +155,32 @@ public class PostDetailsActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void addToOthersNotifications(String otherUid, String post_id, String message) {
+        String timestamp = String.valueOf(System.currentTimeMillis());
+
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("post_id", post_id);
+        hashMap.put("post_uid", otherUid);
+        hashMap.put("notification", message);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("uid", myUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(otherUid).child("Notifications").child(timestamp).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
     private void shareTextOnly(String postTitle, String postDescription) {
         String shareBody = postTitle + "\n" + postDescription;
 
@@ -376,6 +402,8 @@ public class PostDetailsActivity extends AppCompatActivity {
                         postsRef.child(postId).child("post_likes").setValue("" + (postLikes + 1));
                         likesRef.child(postId).child(myUid).setValue("1");
                         mProcessLike = false;
+
+                        addToOthersNotifications(uid, postId, "Liked your post");
                     }
                 }
             }
@@ -421,6 +449,8 @@ public class PostDetailsActivity extends AppCompatActivity {
                 Toast.makeText(PostDetailsActivity.this, "Comment Added", Toast.LENGTH_SHORT).show();
                 commentEditText.setText("");
                 updateCommentCount();
+
+                addToOthersNotifications(uid, myUid, "Commented on your post");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

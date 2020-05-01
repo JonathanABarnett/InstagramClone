@@ -126,7 +126,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                     public void onClick(DialogInterface dialog, int which) {
                         // Delete Notification
                         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-                        ref.child(mAuth.getUid()).child("Notification").child(timestamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        ref.child(mAuth.getUid()).child("Notifications").child(timestamp).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                // Deleted Successfully

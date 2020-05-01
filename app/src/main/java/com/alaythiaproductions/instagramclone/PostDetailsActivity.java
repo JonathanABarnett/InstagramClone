@@ -450,7 +450,7 @@ public class PostDetailsActivity extends AppCompatActivity {
                 commentEditText.setText("");
                 updateCommentCount();
 
-                addToOthersNotifications(uid, myUid, "Commented on your post");
+                addToOthersNotifications(uid, postId , "Commented on your post");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

@@ -29,6 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +45,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -296,7 +299,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void showEditProfileDialog() {
-        String options [] = {"Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone"};
+        String options [] = {"Edit Profile Picture", "Edit Cover Photo", "Edit Name", "Edit Phone", "Change Password"};
         // Alert Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Chose Action");
@@ -323,10 +326,83 @@ public class ProfileFragment extends Fragment {
                     // Edit Phone
                     progressDialog.setMessage("Updating User Phone");
                     showNamePhoneUpdateDialog("phone");
+                }else if (which == 4) {
+                    // Edit Phone
+                    progressDialog.setMessage("Updating Password");
+                    showChangePasswordDialog();
                 }
             }
         });
         builder.create().show();
+    }
+
+    private void showChangePasswordDialog() {
+        // Inflate layout for dialog
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_update_password, null);
+        
+        final EditText currentPasswordET = view.findViewById(R.id.reset_current_password_et);
+        final EditText newPasswordET = view.findViewById(R.id.reset_new_password_et);
+        Button updatePasswordBtn = view.findViewById(R.id.reset_update_button);
+        
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view);
+
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        updatePasswordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Validate Data
+                String currentPassword = currentPasswordET.getText().toString().trim();
+                String newPassword = newPasswordET.getText().toString().trim();
+                if(TextUtils.isEmpty(currentPassword)) {
+                    Toast.makeText(getActivity(), "Enter your current password", Toast.LENGTH_SHORT).show();
+                }
+                else if (newPassword.length() < 6) {
+                    Toast.makeText(getActivity(), "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                } else {
+                    dialog.dismiss();
+                    updatePassword(currentPassword, newPassword);
+                }
+            }
+        });
+    }
+
+    private void updatePassword(String currentPassword, final String newPassword) {
+        progressDialog.show();
+
+        // Get current user
+        final FirebaseUser user = mAuth.getCurrentUser();
+
+        // Before changing password, re-authenticate the user
+        AuthCredential authCredential = EmailAuthProvider.getCredential(user.getEmail(), currentPassword);
+        user.reauthenticate(authCredential).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Successfully authenticated, begin password update
+                user.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Password successfully updated
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), "Password updated", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), "" +e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Authentication failed
+                Toast.makeText(getActivity(), "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showNamePhoneUpdateDialog(final String key) {

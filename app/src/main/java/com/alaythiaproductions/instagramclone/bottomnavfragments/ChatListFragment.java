@@ -5,12 +5,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.alaythiaproductions.instagramclone.CreateGroupActivity;
 import com.alaythiaproductions.instagramclone.MainActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.adapters.ChatListAdapter;
@@ -194,6 +192,8 @@ public class ChatListFragment extends Fragment {
         if (id == R.id.action_logout) {
             mAuth.signOut();
             checkUserStatus();
+        } else if (id == R.id.action_create_group) {
+            startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

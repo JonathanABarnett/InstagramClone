@@ -19,8 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.alaythiaproductions.instagramclone.AddPostActivity;
-import com.alaythiaproductions.instagramclone.DashboardActivity;
+import com.alaythiaproductions.instagramclone.CreateGroupActivity;
 import com.alaythiaproductions.instagramclone.MainActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.adapters.UserAdapter;
@@ -208,6 +207,8 @@ public class UsersFragment extends Fragment {
         if (id == R.id.action_logout) {
             mAuth.signOut();
             checkUserStatus();
+        } else if (id == R.id.action_create_group) {
+            startActivity(new Intent(getContext(), CreateGroupActivity.class));
         }
 
         return super.onOptionsItemSelected(item);

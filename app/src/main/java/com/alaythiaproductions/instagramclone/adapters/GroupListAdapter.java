@@ -1,6 +1,7 @@
 package com.alaythiaproductions.instagramclone.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alaythiaproductions.instagramclone.GroupChatActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.GroupList;
 import com.squareup.picasso.Picasso;
@@ -40,7 +42,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Hold
 
         // Get Data
         GroupList model = groupLists.get(position);
-        String groupId = model.getGroupId();
+        final String groupId = model.getGroupId();
         String icon = model.getGroupIcon();
         String name = model.getGroupName();
 
@@ -52,7 +54,15 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Hold
              holder.group_icon_imageview.setImageResource(R.drawable.ic_group_default);
          }
 
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Open Group Chat
+                Intent intent = new Intent(context, GroupChatActivity.class);
+                intent.putExtra("groupId", groupId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="100dp"
+    android:layout_marginTop="10dp"
+    android:background="@drawable/bg_sender"
+    android:padding="10dp" >
+
+    <TextView
+        android:id="@+id/name_textview"
+        android:text="Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/message_textview"
+        android:layout_below="@+id/name_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="Message"
+        android:textColor="#000" />
+
+    <TextView
+        android:id="@+id/message_timestmp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/message_textview"
+        android:layout_marginEnd="5dp"
+        android:textSize="12sp"
+        android:text="12/30/20 12:30 PM"/>
+
+
+</RelativeLayout>

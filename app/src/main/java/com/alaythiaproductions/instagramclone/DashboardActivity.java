@@ -3,14 +3,18 @@ package com.alaythiaproductions.instagramclone;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ChatListFragment;
+import com.alaythiaproductions.instagramclone.bottomnavfragments.GroupFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.HomeFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.NotificationsFragment;
 import com.alaythiaproductions.instagramclone.bottomnavfragments.ProfileFragment;
@@ -29,6 +33,8 @@ public class DashboardActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private String mUserUID;
 
+    private BottomNavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +49,7 @@ public class DashboardActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Bottom Navigation
-        BottomNavigationView navigationView = findViewById(R.id.navigation);
+        navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
 
         // Home Fragment - Default On Start
@@ -107,19 +113,51 @@ public class DashboardActivity extends AppCompatActivity {
                     chatFragmentTransaction.replace(R.id.content, chatFragment, "");
                     chatFragmentTransaction.commit();
                     return true;
-                case R.id.nav_notifications:
-                    // Users Fragment
-                    actionBar.setTitle("Notifications");
-                    NotificationsFragment notificationsFragment = new NotificationsFragment();
-                    FragmentTransaction notificationsFragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    notificationsFragmentTransaction.replace(R.id.content, notificationsFragment, "");
-                    notificationsFragmentTransaction.commit();
+                case R.id.nav_more:
+                    // Show More Options
+                    showMoreOptions();
                     return true;
             }
 
             return false;
         }
     };
+
+    private void showMoreOptions() {
+        // Popup Menu to Show More Options
+        PopupMenu popupMenu = new PopupMenu(this, navigationView, Gravity.END);
+        // Items to Show
+        popupMenu.getMenu().add(Menu.NONE, 0, 0, "Notifications");
+        popupMenu.getMenu().add(Menu.NONE, 1, 0, "Groups");
+
+        // Menu Clicks
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                int id = item.getItemId();
+                if (id == 0) {
+                    // Notifications Clicked
+                    actionBar.setTitle("Notifications");
+                    NotificationsFragment notificationsFragment = new NotificationsFragment();
+                    FragmentTransaction notificationsFragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    notificationsFragmentTransaction.replace(R.id.content, notificationsFragment, "");
+                    notificationsFragmentTransaction.commit();
+                    return true;
+
+                } else if (id == 1) {
+                    // Groups Clicked
+                    actionBar.setTitle("Groups");
+                    GroupFragment groupFragment = new GroupFragment();
+                    FragmentTransaction groupFragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    groupFragmentTransaction.replace(R.id.content, groupFragment, "");
+                    groupFragmentTransaction.commit();
+                    return true;
+                }
+                return false;
+            }
+        });
+        popupMenu.show();
+    }
 
     private void checkUserStatus() {
         FirebaseUser user = mAuth.getCurrentUser();

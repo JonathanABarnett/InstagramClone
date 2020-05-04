@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:padding="3dp"
+    android:layout_marginTop="1dp">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/group_icon_imageview"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/ic_group_default" />
+
+        <TextView
+            android:id="@+id/group_name_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginLeft="4dp"
+            android:text="Group Name"
+            android:layout_toEndOf="@id/group_icon_imageview"
+            android:textSize="18sp"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/group_sender_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@id/group_icon_imageview"
+            android:layout_below="@id/group_name_textview"
+            android:text="Sender Name"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/group_message_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_below="@id/group_name_textview"
+            android:layout_toEndOf="@id/group_sender_textview"
+            android:text="The Message"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/group_timestamp_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/group_message_textview"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="5dp"
+            android:text="12/20/20 12:30 PM"
+            android:textColor="#000" />
+
+
+
+    </RelativeLayout>
+    
+
+</androidx.cardview.widget.CardView>

@@ -17,8 +17,15 @@
         android:title="Messages"
         android:icon="@drawable/ic_chat_black" />
 
-    <item android:id="@+id/nav_notifications"
-        android:title="Notifications"
-        android:icon="@drawable/ic_notification_black" />
+    <item android:id="@+id/nav_more"
+        android:title="More"
+        android:icon="@drawable/ic_more_black"/>
+
+
+<!--    <item android:id="@+id/nav_notifications"-->
+<!--        android:title="Notifications"-->
+<!--        android:icon="@drawable/ic_notification_black" />-->
+
+
 
 </menu>

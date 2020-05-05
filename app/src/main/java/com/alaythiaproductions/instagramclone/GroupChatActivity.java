@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,7 +37,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
-    private String groupId;
+    private String groupId, groupRole = "";
 
     private Toolbar toolbar;
     private ImageView groupIconIV;
@@ -60,6 +62,8 @@ public class GroupChatActivity extends AppCompatActivity {
         messageET = findViewById(R.id.group_message_edittext);
         chatRV = findViewById(R.id.chat_recycler_view);
 
+        setSupportActionBar(toolbar);
+
         chatArrayList = new ArrayList<>();
 
         // Get ID of the group
@@ -69,6 +73,7 @@ public class GroupChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         loadGroupInfo();
         loadGroupMessages();
+        loadGroupRole();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +90,25 @@ public class GroupChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void loadGroupRole() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+        ref.child(groupId).child("Members").orderByChild("uid").equalTo(mAuth.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    groupRole = ds.child("role").getValue().toString();
+
+                    invalidateOptionsMenu();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadGroupMessages() {
@@ -165,5 +189,34 @@ public class GroupChatActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_logout).setVisible(false);
+        menu.findItem(R.id.action_search).setVisible(false);
+
+        if (groupRole.equals("creator") || groupRole.equals("admin")) {
+            menu.findItem(R.id.action_add_member).setVisible(true);
+        } else {
+            menu.findItem(R.id.action_add_member).setVisible(false);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == (R.id.action_add_member)) {
+            Intent intent = new Intent(this, GroupMemberAddActivity.class);
+            intent.putExtra("groupId", groupId);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

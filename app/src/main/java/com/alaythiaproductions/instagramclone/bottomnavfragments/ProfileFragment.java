@@ -747,6 +747,7 @@ public class ProfileFragment extends Fragment {
         inflater.inflate(R.menu.menu_main, menu);
 
         menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_add_member).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.action_search);
 

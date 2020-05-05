@@ -161,6 +161,8 @@ public class UsersFragment extends Fragment {
 
         // Hide Add Post Icon from fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_add_member).setVisible(false);
+
 
         MenuItem item = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);

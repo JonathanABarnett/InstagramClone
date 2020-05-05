@@ -177,6 +177,7 @@ public class ChatListFragment extends Fragment {
 
         // Hide Add Post Icon from fragment
         menu.findItem(R.id.action_add_post).setVisible(false);
+        menu.findItem(R.id.action_add_member).setVisible(false);
 
         super.onCreateOptionsMenu(menu, inflater);
     }

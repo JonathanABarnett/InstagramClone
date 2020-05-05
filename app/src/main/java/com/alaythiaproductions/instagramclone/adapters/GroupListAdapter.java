@@ -2,6 +2,7 @@ package com.alaythiaproductions.instagramclone.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.alaythiaproductions.instagramclone.GroupChatActivity;
 import com.alaythiaproductions.instagramclone.R;
 import com.alaythiaproductions.instagramclone.models.GroupList;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.HolderGroupList> {
 
@@ -46,6 +54,14 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Hold
         String icon = model.getGroupIcon();
         String name = model.getGroupName();
 
+        holder.group_name_textview.setText("");
+        holder.group_timestamp_textview.setText("");
+        holder.group_message_textview.setText("");
+
+        // Load last message and message time
+        loadLastMessage(model, holder);
+
+        // Set Data
         holder.group_name_textview.setText(name);
 
          try {
@@ -61,6 +77,51 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Hold
                 Intent intent = new Intent(context, GroupChatActivity.class);
                 intent.putExtra("groupId", groupId);
                 context.startActivity(intent);
+            }
+        });
+    }
+
+    private void loadLastMessage(GroupList model, final HolderGroupList holder) {
+        // Get last message from group
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+        ref.child(model.getGroupId()).child("Messages").limitToLast(1).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    String message = ds.child("message").getValue().toString();
+                    String timestamp = ds.child("timestamp").getValue().toString();
+                    String sender = ds.child("sender").getValue().toString();
+
+                    // Convert timestamp
+                    Calendar calendar = Calendar.getInstance(Locale.getDefault());
+                    calendar.setTimeInMillis(Long.parseLong(timestamp));
+                    String time = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
+
+                    holder.group_message_textview.setText(message);
+                    holder.group_timestamp_textview.setText(time);
+
+                    // Get name of last sender of message
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                    ref.orderByChild("uid").equalTo(sender).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                String name = ds.child("name").getValue().toString();
+                                holder.group_sender_textview.setText(name);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

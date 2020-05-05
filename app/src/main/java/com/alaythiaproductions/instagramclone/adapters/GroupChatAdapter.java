@@ -62,7 +62,6 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.Hold
         calendar.setTimeInMillis(Long.parseLong(timestamp));
         String time = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
 
-
         holder.messageTV.setText(message);
         holder.timeTV.setText(time);
 
@@ -76,9 +75,9 @@ public class GroupChatAdapter extends RecyclerView.Adapter<GroupChatAdapter.Hold
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String name = ds.child("").getValue().toString();
+                    String name = ds.child("name").getValue().toString();
 
-                    holder.nameTV.setText(name);
+                    holder.nameTV.setText(name); // Hide self name?
                 }
             }
 

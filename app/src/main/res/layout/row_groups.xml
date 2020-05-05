@@ -36,6 +36,7 @@
             android:layout_toEndOf="@id/group_icon_imageview"
             android:layout_below="@id/group_name_textview"
             android:text="Sender Name"
+            android:textStyle="bold"
             android:textColor="#000" />
 
         <TextView

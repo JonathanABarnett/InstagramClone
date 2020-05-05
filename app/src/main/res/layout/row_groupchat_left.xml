@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_marginEnd="100dp"
     android:layout_marginTop="10dp"
     android:background="@drawable/bg_receiver"
@@ -19,7 +20,6 @@
 
     <TextView
         android:id="@+id/message_textview"
-        android:layout_below="@+id/name_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
@@ -27,15 +27,23 @@
         android:text="Message"
         android:textColor="#000" />
 
+    <!-- ImageView: Image Message -->
+    <ImageView
+        android:id="@+id/image_imageview"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_image_black" />
+
     <TextView
         android:id="@+id/message_timestmp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/message_textview"
+        android:textAlignment="textEnd"
         android:layout_marginEnd="5dp"
         android:textSize="12sp"
         android:text="12/30/20 12:30 PM"/>
 
 
-</RelativeLayout>
+</LinearLayout>

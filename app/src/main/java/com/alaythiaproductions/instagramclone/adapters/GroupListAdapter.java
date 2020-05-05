@@ -91,13 +91,19 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Hold
                     String message = ds.child("message").getValue().toString();
                     String timestamp = ds.child("timestamp").getValue().toString();
                     String sender = ds.child("sender").getValue().toString();
+                    String messageType = ds.child("type").getValue().toString();
 
                     // Convert timestamp
                     Calendar calendar = Calendar.getInstance(Locale.getDefault());
                     calendar.setTimeInMillis(Long.parseLong(timestamp));
                     String time = DateFormat.format("MM/dd/yy hh:mm aa", calendar).toString();
 
-                    holder.group_message_textview.setText(message);
+                    if (messageType.equals("image")) {
+                        holder.group_message_textview.setText("Sent Photo");
+                    } else {
+                        holder.group_message_textview.setText(message);
+                    }
+
                     holder.group_timestamp_textview.setText(time);
 
                     // Get name of last sender of message

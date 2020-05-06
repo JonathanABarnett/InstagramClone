@@ -90,9 +90,9 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setTitle("Choose Option");
 
-                            if (groupRole.equals("creator")) {
+                            if (groupRole.equals("Creator")) {
                                 // Current user is the group creator and someone else is the Admin
-                                if (previousRole.equals("admin")) {
+                                if (previousRole.equals("Admin")) {
                                     options = new String[]{"Remove Admin", "Remove Member"};
                                     builder.setItems(options, new DialogInterface.OnClickListener() {
                                         @Override
@@ -107,7 +107,7 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
                                         }
                                     }).show();
                                     // Current User is group creator and other is a member
-                                } else if (previousRole.equals("member")) {
+                                } else if (previousRole.equals("Member")) {
                                     options = new String[]{"Make Admin", "Remove User"};
                                     builder.setItems(options, new DialogInterface.OnClickListener() {
                                         @Override
@@ -123,10 +123,10 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
                                     }).show();
                                     // Current User is admin and other is creator
                                 }
-                            } else if (groupRole.equals("admin")) {
-                                if (previousRole.equals("creator")) {
+                            } else if (groupRole.equals("Admin")) {
+                                if (previousRole.equals("Creator")) {
                                     Toast.makeText(context, "Creator of Group", Toast.LENGTH_SHORT).show();
-                                } else if (previousRole.equals("admin")) {
+                                } else if (previousRole.equals("Admin")) {
                                     options = new String[]{"Make Admin", "Remove User"};
                                     builder.setItems(options, new DialogInterface.OnClickListener() {
                                         @Override
@@ -141,7 +141,7 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
                                         }
                                     }).show();
                                     // Current User is admin and other is a member
-                                } else if (previousRole.equals("member")) {
+                                } else if (previousRole.equals("Member")) {
                                     options = new String[]{"Make Admin", "Remove User"};
                                     builder.setItems(options, new DialogInterface.OnClickListener() {
                                         @Override
@@ -190,7 +190,7 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
         String timestamp = String.valueOf(System.currentTimeMillis());
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("uid", user.getUid());
-        hashMap.put("role", "member");
+        hashMap.put("role", "Member");
         hashMap.put("timestamp", timestamp);
 
         // Add User to Group
@@ -254,7 +254,7 @@ public class MemberAddAdapter extends RecyclerView.Adapter<MemberAddAdapter.Hold
         // Setup Data
         String timestamp = String.valueOf(System.currentTimeMillis());
         HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("role", "member");
+        hashMap.put("role", "Member");
 
         // Update User Role
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");

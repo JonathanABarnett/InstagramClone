@@ -2,18 +2,24 @@ package com.alaythiaproductions.instagramclone;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.text.style.TtsSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alaythiaproductions.instagramclone.adapters.MemberAddAdapter;
 import com.alaythiaproductions.instagramclone.models.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -75,6 +81,94 @@ public class GroupInfoActivity extends AppCompatActivity {
                 Intent intent = new Intent(GroupInfoActivity.this, GroupMemberAddActivity.class);
                 intent.putExtra("groupId", groupId);
                 startActivity(intent);
+            }
+        });
+
+        leaveGroupTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // If the user is a member/admin - leave group
+                // If the user is the creator - delete gorup
+                String dialogTitle = "";
+                String dialogDescription = "";
+                String positiveButtonTitle = "";
+                if (groupRole.equals("Creator")) {
+                    dialogTitle = "Delete Group";
+                    dialogDescription = "Are you sure you want to delete the group permanently?";
+                    positiveButtonTitle = "Delete";
+                } else {
+                    dialogTitle = "Leave Group";
+                    dialogDescription = "Are you sure you want to leave the group?";
+                    positiveButtonTitle = "Leave";
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(GroupInfoActivity.this);
+                builder.setTitle(dialogTitle).setMessage(dialogDescription).setPositiveButton(positiveButtonTitle, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (groupRole.equals("Creator")) {
+                            // Creator: Delete Group
+                            deleteGroup();
+                        } else {
+                            // Admin/Member: Leave Group
+                            leaveGroup();
+                        }
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        editGroupTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Send intent to GroupMemberActivity
+                Intent intent = new Intent(GroupInfoActivity.this, GroupEditActivity.class);
+                intent.putExtra("groupId", groupId);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void leaveGroup() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+        ref.child(groupId).child("Members").child(mAuth.getUid()).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Left Group Successfully
+                Toast.makeText(GroupInfoActivity.this, "You have left the group", Toast.LENGTH_SHORT).show();
+
+                startActivity(new Intent(GroupInfoActivity.this, DashboardActivity.class));
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error Leaving Group
+                Toast.makeText(GroupInfoActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteGroup() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+        ref.child(groupId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Group Deleted Successfully
+                Toast.makeText(GroupInfoActivity.this, "Deleted Group", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(GroupInfoActivity.this, "You have left the group", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Error Leaving Group
+                Toast.makeText(GroupInfoActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -146,15 +240,15 @@ public class GroupInfoActivity extends AppCompatActivity {
                     groupRole = ds.child("role").getValue().toString();
                     actionBar.setSubtitle(mAuth.getCurrentUser().getEmail() + " (" + groupRole + ")");
 
-                    if (groupRole.equals("member")) {
+                    if (groupRole.equals("Member")) {
                         editGroupTV.setVisibility(View.GONE);
                         addMemberTV.setVisibility(View.GONE);
                         leaveGroupTV.setText("Leave Group");
-                    } else if (groupRole.equals("admin")) {
+                    } else if (groupRole.equals("Admin")) {
                         editGroupTV.setVisibility(View.GONE);
                         addMemberTV.setVisibility(View.VISIBLE);
                         leaveGroupTV.setText("Leave Group");
-                    } else if (groupRole.equals("creator")) {
+                    } else if (groupRole.equals("Creator")) {
                         editGroupTV.setVisibility(View.VISIBLE);
                         addMemberTV.setVisibility(View.VISIBLE);
                         leaveGroupTV.setText("Delete Group");

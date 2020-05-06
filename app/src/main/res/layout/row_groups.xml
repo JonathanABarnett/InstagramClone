@@ -2,10 +2,10 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="#fff"
     android:padding="3dp"
-    android:layout_marginTop="1dp">
+    android:layout_marginTop="2dp">
     
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             android:layout_marginStart="4dp"
             android:layout_toEndOf="@id/group_icon_imageview"
             android:layout_below="@id/group_name_textview"
-            android:text="Sender Name"
+            android:text=""
             android:textStyle="bold"
             android:textColor="#000" />
 
@@ -59,9 +59,6 @@
             android:text="12/20/20 12:30 PM"
             android:textColor="#000" />
 
-
-
     </RelativeLayout>
-    
 
 </androidx.cardview.widget.CardView>

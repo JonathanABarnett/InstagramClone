@@ -381,7 +381,7 @@ public class GroupChatActivity extends AppCompatActivity {
         menu.findItem(R.id.action_logout).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(false);
 
-        if (groupRole.equals("creator") || groupRole.equals("admin")) {
+        if (groupRole.equals("Creator") || groupRole.equals("Admin")) {
             menu.findItem(R.id.action_add_member).setVisible(true);
         } else {
             menu.findItem(R.id.action_add_member).setVisible(false);

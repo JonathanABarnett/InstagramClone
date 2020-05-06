@@ -394,7 +394,13 @@ public class GroupChatActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == (R.id.action_add_member)) {
+            // Send intent to GroupMemberActivity
             Intent intent = new Intent(this, GroupMemberAddActivity.class);
+            intent.putExtra("groupId", groupId);
+            startActivity(intent);
+        } else if (id == (R.id.action_group_info)) {
+            // Send intent to GroupInfoActivity
+            Intent intent = new Intent(this, GroupInfoActivity.class);
             intent.putExtra("groupId", groupId);
             startActivity(intent);
         }

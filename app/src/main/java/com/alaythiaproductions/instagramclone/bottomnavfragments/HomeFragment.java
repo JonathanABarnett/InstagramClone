@@ -162,6 +162,7 @@ public class HomeFragment extends Fragment {
 
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_add_member).setVisible(false);
+        menu.findItem(R.id.action_group_info).setVisible(false);
 
         // SearchView to search post by title/description
         MenuItem item = menu.findItem(R.id.action_search);

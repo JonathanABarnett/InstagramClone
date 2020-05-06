@@ -748,6 +748,7 @@ public class ProfileFragment extends Fragment {
 
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_add_member).setVisible(false);
+        menu.findItem(R.id.action_group_info).setVisible(false);
 
         MenuItem item = menu.findItem(R.id.action_search);
 

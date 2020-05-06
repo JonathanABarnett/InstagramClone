@@ -26,4 +26,9 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_add_member_white"/>
 
+    <item android:id="@+id/action_group_info"
+        android:title="Group Info"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_group_info_white"/>
+
 </menu>
